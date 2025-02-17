@@ -39,18 +39,17 @@ app.MapGet("/gateway/GetCustomerById/{id}", async (int id) => {
     return await httpClient.GetStringAsync($"http://localhost:5189/orders/{id}");
 });
 
-app.MapPost("/gateway/AddCustomer", async (HttpContext context) => {
-    var customer = await context.Request.ReadFromJsonAsync<object>();
-    var json = JsonSerializer.Serialize(customer);
-    var content = new StringContent(json, Encoding.UTF8, "application/json");
-    return await httpClient.PostAsync($"http://localhost:5189/orders",content);
+// Add Customer
+app.MapPost("/gateway/AddCustomer", async (Order newOrder) => {
+    var stringContent =  new StringContent(newOrder.ToString());
+    return await httpClient.PostAsync("http://localhost:5189/orders", stringContent);
 });
 
-app.MapPut("/gateway/UpdateCustomer/{id}", async (HttpContext context, int id) => {
-    var customer = await context.Request.ReadFromJsonAsync<object>();
-    var json = JsonSerializer.Serialize(customer);
-    var content = new StringContent(json, Encoding.UTF8, "application/json");
-    return await httpClient.PostAsync($"http://localhost:5189/orders", content);
+// Update Customer
+app.MapPut("/gateway/UpdateCustomer/{id}", async (Order newOrder, int id) => {
+    var stringContent =  new StringContent(newOrder.ToString());
+
+    return await httpClient.PutAsync($"http://localhost:5189/orders/{id}", stringContent);
 });
 
 
@@ -76,3 +75,10 @@ app.MapDelete("/gateway/DeleteBooking/{id}", async (int id) => {
 
 app.Run();
  
+
+
+ class Order {
+    public int Id { get; set; }
+    public int Quantity { get; set; }
+    public required string Status { get; set; }
+}
