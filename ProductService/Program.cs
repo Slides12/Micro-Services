@@ -20,6 +20,15 @@ app.MapPost("/CreateBooking", (Booking booking) =>
     return booking;
 });
 
+app.MapPut("/UpdateBooking", (Booking booking) =>
+{
+    var existingBooking = bookings.FirstOrDefault(x => x.Id == booking.Id);
+    existingBooking.Date = booking.Date;
+    existingBooking.Location = booking.Location;
+    existingBooking.Status = booking.Status;
+    return existingBooking;
+});
+
 app.MapDelete("/DeleteBooking/{id}", (string id) =>
 {
     var booking = bookings.FirstOrDefault(x => x.Id == id);
